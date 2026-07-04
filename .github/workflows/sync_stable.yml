@@ -1,0 +1,23 @@
+name: Sync forks (stable)
+on:
+  schedule:
+    - cron: "0 18 * * *"   # daily, tracks the latest MiSTer release commit
+  workflow_dispatch:
+  repository_dispatch:
+    types: [sync_stable]
+
+concurrency:
+  group: sync_stable
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Dispatch stable sync to forks
+        env:
+          GH_TOKEN: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+        run: bash .github/sync_dispatch.sh --stable
+
+# registered via workflow_dispatch

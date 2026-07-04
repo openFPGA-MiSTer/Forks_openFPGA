@@ -1,0 +1,22 @@
+name: Propagate fork CI/CD
+on:
+  push:
+    branches: [master]
+    paths:
+      - "fork_ci_template/**"
+      - "cores/**"
+      - "Forks.ini"
+      - ".github/setup_cicd.sh"
+  workflow_dispatch:
+  repository_dispatch:
+    types: [setup_cicd]
+
+jobs:
+  propagate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Materialize CI into forks
+        env:
+          GH_TOKEN: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+        run: bash .github/setup_cicd.sh

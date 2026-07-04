@@ -1,0 +1,23 @@
+name: Sync forks (unstable)
+on:
+  schedule:
+    - cron: "0 6,18 * * *"   # twice daily, tracks MiSTer master HEAD
+  workflow_dispatch:
+  repository_dispatch:
+    types: [sync_unstable]
+
+concurrency:
+  group: sync_unstable
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Dispatch unstable sync to forks
+        env:
+          GH_TOKEN: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+        run: bash .github/sync_dispatch.sh --unstable
+
+# registered via workflow_dispatch
